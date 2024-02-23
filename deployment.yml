@@ -1,0 +1,46 @@
+resource_types:
+- name: ssh
+  type: docker-image
+  source:
+    repository: umapathiv/concourse-ssh-resource
+- name: helm
+  type: docker-image
+  source:
+    repository: ilyasotkov/concourse-helm-resource
+    tag: 1.1.1
+resources:
+  - name: ec2-ssh
+    type: ssh
+    source:
+      hostname: ec2-3-83-15-241.compute-1.amazonaws.com
+      username: ubuntu
+      private_key: |
+        -----BEGIN RSA PRIVATE KEY-----
+        -----END RSA PRIVATE KEY-----
+  - name: helm-release
+  type: helm
+  source:
+    kubeconfig: |
+      apiVersion: v1
+      kind: Config
+      preferences: {}
+      contexts:
+      - context:
+          cluster: development
+    repos:
+      - name: helmrepo
+        url: https://github.com/Umapathy8888/Helmrepo.git     
+jobs:
+  - name: ssh-to-ec2
+    plan:
+      - put: ec2-ssh
+        #params:
+        #  command: 
+      - put: release-app
+        params:
+          values: helmrepo/values.yaml
+          override_values:
+          - key: replicas
+            value: 2
+          - key: version
+            path: version/number     
