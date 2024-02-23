@@ -7,6 +7,6 @@ jobs:
     plan:
       - put: localhost
         params:
-          command: sudo docker pull umapathiv/sprinboot:latest
+          command: sudo docker pull sandeep2024/springboot:latest
           command: sudo docker build -t springboot .
-          command: sudo docker run -d -p 8081:80 sprinboot
+          command: sudo docker run -d -p 8081:80 springboot
